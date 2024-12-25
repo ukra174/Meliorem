@@ -92,10 +92,10 @@
             document.body.appendChild(md_script);
             code = localStorage.getItem("code" + id);
             if (code) {
-                document.getElementById("editor").innerHTML = localStorage.getItem("code");
+                document.getElementById("editor").innerHTML = code;
             }
             editor = ace.edit("editor");
-            console.log(localStorage.getItem("code" + id))
+            console.log(code);
             //var python_mode = ace.require("ace/mode/python").Mode;
             editor.session.setMode("ace/mode/python");
 
