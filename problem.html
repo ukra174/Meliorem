@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
-        body {
+        .work_field {
             margin: 0;
             display: flex;
         }
@@ -28,10 +28,13 @@
         }
 
         .python_status {
+            font-family: monospace;
             position: absolute;
-            font-size: 50%;
-            bottom: 5px;
-            right: 5px;
+            font-size: 70%;
+            top: 62px;
+            right: 30px;
+            -webkit-animation: fadeOut 8s;
+            animation: fadeOut 8s forwards;
         }
 
         #editor {
@@ -40,9 +43,26 @@
         }
 
         .result {
+            font-family: monospace;
             overflow-y: scroll;
             height: 400px;
-            overflow: auto
+            overflow: auto;
+            background-color: rgb(247, 247, 247);
+            padding: 10px;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+
+            84% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
         }
     </style>
 
@@ -60,14 +80,30 @@
         var setup = "";
         var code = "";
         var check = "";
-        var editor
+        const urlParams = new URLSearchParams(window.location.search);
+        if (!urlParams.has("id")) {
+            window.location.href = "./";
+        }
+        var id = urlParams.get("id");
+        var editor;
         function create_md() {
             var md_script = document.createElement("script");
             md_script.src = "https://cdn.jsdelivr.net/gh/MarketingPipeline/Markdown-Tag/markdown-tag.js";
             document.body.appendChild(md_script);
+            code = localStorage.getItem("code" + id);
+            if (code) {
+                document.getElementById("editor").innerHTML = localStorage.getItem("code");
+            }
             editor = ace.edit("editor");
+            console.log(localStorage.getItem("code" + id))
             //var python_mode = ace.require("ace/mode/python").Mode;
             editor.session.setMode("ace/mode/python");
+
+
+            fetch('./footer.html')
+                .then(response => response.text())
+                .then(data => document.getElementById('footer').innerHTML = data);
+
 
 
         }
@@ -79,6 +115,7 @@
             var old_result = document.getElementById("result")
             old_result.innerHTML = ""
             code = editor.session.getValue()
+            localStorage.setItem("code" + id, code)
             var e = document.createElement("script")
             e.type = "py"
             e.class = "result"
@@ -88,7 +125,7 @@
             solving_body.appendChild(e)
         }
 
-        fetch('1.md')
+        fetch("./problems/" + id + '.md')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -104,40 +141,57 @@
                 var desc = document.getElementById("problem")
                 var md = document.createElement("github-md")
                 md.innerHTML = md_text;
+                var footer = document.createElement("footer");
+                footer.id = "footer"
                 desc.appendChild(md);
+                desc.appendChild(footer);
+
                 create_md();
+
             })
             .catch(error => {
                 console.error('Error fetching the file:', error);
             });
 
     </script>
+    <script>
+        // Inject header and footer on page load
+        window.onload = function () {
+            fetch('./header.html')
+                .then(response => response.text())
+                .then(data => document.getElementById('header').innerHTML = data);
 
+        }
+    </script>
+    <div id="header"></div>
 </head>
 
 <body>
-    <div id="problem" class="problem">
+    <div class="work_field">
+        <div id="problem" class="problem">
 
-    </div>
+        </div>
 
-    <br>
-    <br>
-
-    <div id="solving" class="solving">
-        <div id="editor">print("Hello world!")</div>
         <br>
-        <button onclick="execute()">Run!</button>
-        <br><br>
-        <div id="result" class="result"></div>
+        <br>
+
+        <div id="solving" class="solving">
+            <div id="editor">print("Hello world!")</div>
+            <br>
+            <button onclick="execute()">Run!</button>
+            <br><br>
+            <div id="result" class="result"></div>
 
 
-        <div class="python_status">
-            <script type="py" onload="console.log('sosal')">
+            <div class="python_status">
+                <script type="py" onload="console.log('sosal')">
                 from pyscript import display
                 display("Python module launched successfully!")
-            </script>
+                </script>
+            </div>
         </div>
     </div>
+
 
 
 </body>
