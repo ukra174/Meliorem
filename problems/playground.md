@@ -3,7 +3,7 @@
 
 {   
     "created":"24/12/2024",
-    "categories":["test"]
+    "categories":["Test"]
 }
 
 </metadata>
