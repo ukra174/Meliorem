@@ -1,15 +1,281 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meliorem</title>
+    <title>Meliorem - Coding Quests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            margin: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .filter-container {
+            margin-bottom: 20px;
+        }
+
+        .filter-container input {
+            padding: 10px;
+            font-size: 16px;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .category-filter-container {
+            margin-top: 20px;
+        }
+
+        .category-filter-container .category {
+            display: inline-block;
+            background-color: #e0e0e0;
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin-right: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .problem-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .problem-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            text-decoration: none;
+            color: #000;
+        }
+
+        .problem-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .problem-name:hover {
+            color: #007bff;
+        }
+        .categories li:hover{
+            color: #007bff;
+        }
+
+        .problem-name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .created-date {
+            font-style: italic;
+            color: #555;
+        }
+
+        .categories {
+            margin-top: 10px;
+        }
+
+        .categories li {
+            display: inline-block;
+            background-color: #e0e0e0;
+            padding: 5px 10px;
+            border-radius: 3px;
+            margin-right: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .categories {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 10px;
+        }
+    </style>
 </head>
-
 <body>
-    <a href="./problem.html?id=1">Problem 1</a>
+    <!-- Header Injection -->
+    <div id="header"></div>
 
+    <div class="container">
+        <h1>List of Coding Quests</h1>
+
+        <!-- Filter Input -->
+        <div class="filter-container">
+            <input type="text" id="filter-input" placeholder="Search quests by name or category...">
+        </div>
+
+        <!-- Category Filter -->
+        <div class="category-filter-container" id="category-filter-container">
+            <span>Filter by category: </span>
+        </div>
+
+        <ul class="problem-list" id="problem-list"></ul>
+    </div>
+
+    <!-- Footer Injection -->
+    <div id="footer"></div>
+
+    <script>
+        // Function to load header and footer content
+        function loadHtml(id, path) {
+            fetch(path)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById(id).innerHTML = data;
+                })
+                .catch(error => console.error(`Error loading ${path}:`, error));
+        }
+
+        // Load header and footer from external files
+        loadHtml('header', './header.html');
+        loadHtml('footer', './footer.html');
+
+        // Function to format the markdown filename to a human-readable problem name
+        function formatProblemName(filename) {
+            const nameParts = filename.replace('.md', '').split('_');
+            return nameParts.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        // Function to fetch and display problems from problems.json
+        function loadProblems() {
+            fetch('./problems.json')  // Fetch the problems data from problems.json
+                .then(response => response.json())
+                .then(data => {
+                    const problemListContainer = document.getElementById('problem-list');
+                    const categoryFilterContainer = document.getElementById('category-filter-container');
+                    const filterInput = document.getElementById('filter-input');
+                    
+                    if (data.problems.length === 0) {
+                        problemListContainer.innerHTML = "<li>No problems available.</li>";
+                        return;
+                    }
+
+                    // To hold all the problems and categories
+                    const problems = [];
+                    const allCategories = new Set();
+
+                    data.problems.forEach(problemObj => {
+                        const problemFile = Object.keys(problemObj)[0];
+                        const problemData = problemObj[problemFile];
+                        const problemName = formatProblemName(problemFile);
+
+                        const problemItem = document.createElement('li');
+                        problemItem.classList.add('problem-item');
+
+                        const problemLink = document.createElement('a');
+                        problemLink.href = `./problem.html?id=${problemFile.replace('.md', '')}`;
+
+                        const name = document.createElement('div');
+                        name.classList.add('problem-name');
+                        name.innerText = problemName;
+
+                        const createdDate = document.createElement('div');
+                        createdDate.classList.add('created-date');
+                        createdDate.innerText = `Created on: ${problemData.created}`;
+
+                        const categoriesList = document.createElement('ul');
+                        categoriesList.classList.add('categories');
+                        problemData.categories.forEach(category => {
+                            const categoryItem = document.createElement('li');
+                            categoryItem.innerText = category;
+
+                            // Prevent the problem link from being activated when clicking on a category
+                            categoryItem.onclick = (event) => {
+                                event.preventDefault();  // Prevent the link action
+                                event.stopPropagation(); // Stop click event propagation
+                                filterByCategory(category.toLowerCase());  // Trigger category filter
+                            };
+
+                            categoriesList.appendChild(categoryItem);
+
+                            // Add categories to the set for filtering
+                            allCategories.add(category.toLowerCase());
+                        });
+
+                        problemLink.appendChild(name);
+                        problemLink.appendChild(createdDate);
+                        problemLink.appendChild(categoriesList);
+                        problemItem.appendChild(problemLink);
+
+                        problems.push({
+                            element: problemItem,
+                            name: problemName.toLowerCase(),
+                            categories: problemData.categories.map(c => c.toLowerCase())
+                        });
+                    });
+
+                    // Append all problems initially
+                    problems.forEach(problem => {
+                        problemListContainer.appendChild(problem.element);
+                    });
+
+                    // Create category filter buttons dynamically
+                    allCategories.forEach(category => {
+                        const categoryButton = document.createElement('span');
+                        categoryButton.classList.add('category');
+                        categoryButton.innerText = category.charAt(0).toUpperCase() + category.slice(1);
+                        categoryButton.onclick = () => filterByCategory(category);
+                        categoryFilterContainer.appendChild(categoryButton);
+                    });
+
+                    // Filter logic by name (text input)
+                    filterInput.addEventListener('input', function() {
+                        const query = this.value.toLowerCase();
+                        problems.forEach(problem => {
+                            const matchesName = problem.name.includes(query);
+                            const matchesCategory = problem.categories.some(category => category.includes(query));
+
+                            if (matchesName || matchesCategory) {
+                                problem.element.style.display = 'block';
+                            } else {
+                                problem.element.style.display = 'none';
+                            }
+                        });
+                    });
+
+                    // Filter logic by category (category buttons)
+                    let activeCategoryFilter = null;
+
+                    function filterByCategory(category) {
+                        if (activeCategoryFilter === category) {
+                            activeCategoryFilter = null;
+                            // Reset filter and show all problems
+                            problems.forEach(problem => {
+                                problem.element.style.display = 'block';
+                            });
+                        } else {
+                            activeCategoryFilter = category;
+                            problems.forEach(problem => {
+                                if (problem.categories.includes(activeCategoryFilter)) {
+                                    problem.element.style.display = 'block';
+                                } else {
+                                    problem.element.style.display = 'none';
+                                }
+                            });
+                        }
+                    }
+                })
+                .catch(error => console.error('Error loading problems:', error));
+        }
+
+        // Load the problems after DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProblems();
+        });
+    </script>
 </body>
-
 </html>

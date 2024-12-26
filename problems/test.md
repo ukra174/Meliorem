@@ -1,4 +1,12 @@
 
+<metadata>
+
+{   
+    "created":"24/12/2024",
+    "categories":["optimization","test"]
+}
+
+</metadata>
 <setup>
 import math
 class A:
@@ -12,7 +20,7 @@ a=A()
 print=display
 </setup>
 
-# Problem 1
+# Problem 2
 Everything begins somewhere!
 
 So this is a *description* of a problem you will be solving today.

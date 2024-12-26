@@ -1,4 +1,12 @@
 
+<metadata>
+
+{   
+    "created":"24/12/2024",
+    "categories":["optimization"]
+}
+
+</metadata>
 <setup>
 import math
 class A:
