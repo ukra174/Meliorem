@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -71,7 +72,8 @@
         .problem-name:hover {
             color: #007bff;
         }
-        .categories li:hover{
+
+        .categories li:hover {
             color: #007bff;
         }
 
@@ -106,6 +108,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- Header Injection -->
     <div id="header"></div>
@@ -158,7 +161,7 @@
                     const problemListContainer = document.getElementById('problem-list');
                     const categoryFilterContainer = document.getElementById('category-filter-container');
                     const filterInput = document.getElementById('filter-input');
-                    
+
                     if (data.problems.length === 0) {
                         problemListContainer.innerHTML = "<li>No problems available.</li>";
                         return;
@@ -233,7 +236,7 @@
                     });
 
                     // Filter logic by name (text input)
-                    filterInput.addEventListener('input', function() {
+                    filterInput.addEventListener('input', function () {
                         const query = this.value.toLowerCase();
                         problems.forEach(problem => {
                             const matchesName = problem.name.includes(query);
@@ -273,9 +276,10 @@
         }
 
         // Load the problems after DOM is ready
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadProblems();
         });
     </script>
 </body>
+
 </html>
