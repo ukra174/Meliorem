@@ -1,1 +1,39 @@
-{"problems": [{"connect_the_dots.md": {"created": "26/12/2024", "categories": ["2D", "Optimization"]}}, {"quest_from_AI.md": {"created": "26/12/2024", "categories": ["2D", "Optimization"]}}, {"playground.md": {"created": "24/12/2024", "categories": ["Test"]}}]}
+{
+    "problems": [
+        {
+            "connect_the_dots.md": {
+                "created": "26/12/2024",
+                "categories": [
+                    "2D",
+                    "Optimization"
+                ]
+            }
+        },
+        {
+            "quest_from_AI.md": {
+                "created": "26/12/2024",
+                "categories": [
+                    "2D",
+                    "Optimization"
+                ]
+            }
+        },
+        {
+            "playground.md": {
+                "created": "24/12/2024",
+                "categories": [
+                    "Test"
+                ]
+            }
+        },
+        {
+            "Linear_Algebra/0.md": {
+                "created": "24/12/2024",
+                "categories": [
+                    "Lessons",
+                    "Math"
+                ]
+            }
+        }
+    ]
+}
