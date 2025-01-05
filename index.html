@@ -149,7 +149,7 @@
 
         // Function to format the markdown filename to a human-readable problem name
         function formatProblemName(filename) {
-            const nameParts = filename.replace('.md', '').split('_');
+            const nameParts = filename.split("/")[0].replace('.md', '').split('_');
             return nameParts.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         }
 
